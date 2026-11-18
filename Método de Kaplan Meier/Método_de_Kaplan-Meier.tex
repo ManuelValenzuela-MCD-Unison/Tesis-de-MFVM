@@ -1,4 +1,5 @@
 \chapter*{Método de Kaplan-Meier}
+\lhead{ \emph{Método de Kaplan-Meier}}
 
 Una distribución de tiempos de sobrevivencia se puede caracterizar por una función de supervivencia $S(t)$, definida como la probabilidad de que un individuo sobreviva más allá de un tiempo $t$,
 \begin{equation}
@@ -30,6 +31,8 @@ Para ejemplificar el método de Kaplan-Meier, en la Figura \ref{Oahu} se muestra
 Primero, se deben ordenar únicamente las observaciones detectadas, asignarles la posición que tienen en la muestra $r$ y la cantidad de observaciones $d$ que comparten esa misma medición (por ejemplo, hubo 2 mediciones de 0.7). Luego, se calcula el número de riesgo $b=(n-r+1)$. Ahora, con los valores $b$ y $d$ se puede calcular $\hat{S}(t)$. Los resultados se muestran en la Tabla \ref{KM_Oahu}.
 
 \begin{table}[H]
+\caption{Ejemplo del Método de Kaplan-Meier}
+\label{KM_Oahu}
 \begin{tabular}{cccccc}
 \hline
 \begin{tabular}[c]{@{}c@{}}Mediciones\\ detectadas\end{tabular} & \begin{tabular}[c]{@{}c@{}}posición\\ $r$\end{tabular} & \begin{tabular}[c]{@{}c@{}}Número\\ en riesgo $b_i$,\\ $b_i = (n-r+1)$\end{tabular} & \begin{tabular}[c]{@{}c@{}}Cantidad de\\ detecciones $d_i$\\ en ese valor\end{tabular} & \begin{tabular}[c]{@{}c@{}}Incremento de\\ supervivencia\\ $p_i=1-\frac{d_i}{b_i}$\end{tabular} & $\hat{S}(t)=\prod_{i=1}^n p_i$ \\ \hline
