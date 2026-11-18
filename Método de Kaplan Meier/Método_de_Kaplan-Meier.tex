@@ -1,1 +1,212 @@
+\chapter*{Método de Kaplan-Meier}
 
+Una distribución de tiempos de sobrevivencia se puede caracterizar por una función de supervivencia $S(t)$, definida como la probabilidad de que un individuo sobreviva más allá de un tiempo $t$,
+\begin{equation}
+    S(t)=P(T >t),
+    \label{funcion_supervivencia}
+\end{equation}
+y la gráfica de esta función se conoce como curva de sobrevivencia. 
+
+Debido a la censura, sólo se puede observar el tiempo $X$ observado ó el tiempo de censura $C$. En un caso, se observa $X$ si la observación ocurre antes que la censura ($X\leq C$); por otro lado, no se logra observar $X$ si la censura llega primero ($C < X$). Entonces se observa el primer tiempo de ocurrencia ($\min \{X, C\}$) y el estado de la censura, ya sea $X\leq C$ ó $C < X$. 
+
+Los datos de supervivencia consisten en $(t_i,\delta_i)$, $i=1,...,n$, donde $t_i$ es el tiempo de supervivencia o de censura, lo que ocurra primero. Mientras que $\delta_i$ es el indicador de censura ($\delta_i=1$ si $t_i=T$ y $\delta_i=0$ si $t_i=C$).
+
+Bajo el modelo de censura aleatorio, se anota $t_i=\{X, C \}$ y $\delta_i=\textbf{I}(X\leq C)$, donde $\textbf{I}(\cdot)$ es la función indicadora. Se asumen que todas las observaciones $X$ son diferentes ($t_i\neq t_j$ cuando $i\neq j$ y $\delta_i=\delta_j=1$) para que no haya empates en los tiempos. Con los datos de supervivencia, se puede estimar la función de supervivencia $S(t)\equiv \Pr (X > t)$ mediante el estimador:
+
+\begin{equation}\label{survival}
+\hat{S}(t)=\prod_{t_i\leq t,\delta_i=1}\left( 1- \frac{d_i}{b_i} \right), \qquad 0 \leq t \leq \max_{i} (t_i)     
+\end{equation}
+donde $b_i=\sum_{\ell = 1}^{n}\textbf{I}(t_{\ell} \geq t_i)$ es el número de entidades “en riesgo'' en el tiempo $t_i; ~\hat{S}(t)=1$ si no ocurre ninguna muerte hasta el tiempo $t$; $\hat{S}(t)$ no está definida para $t > \max_i(t_i)$ \cite[p. 10]{Emura_survival}.
+
+Para ejemplificar el método de Kaplan-Meier, en la Figura \ref{Oahu} se muestran las concentraciones de arsénico As, en $\mu g/L$, del río Manoa en Oahu, Hawaii. Se tienen 24 mediciones y 3 límites de detección, donde AsCen indica cuales mediciones están censuradas por la izquierda como TRUE. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{Pictures/Oahu.png}
+    \caption{Muestra de concentraciones de arsénico del río Manoa en Oahu, Hawaii.}
+    \label{Oahu}
+\end{figure}
+
+Primero, se deben ordenar únicamente las observaciones detectadas, asignarles la posición que tienen en la muestra $r$ y la cantidad de observaciones $d$ que comparten esa misma medición (por ejemplo, hubo 2 mediciones de 0.7). Luego, se calcula el número de riesgo $b=(n-r+1)$. Ahora, con los valores $b$ y $d$ se puede calcular $\hat{S}(t)$. Los resultados se muestran en la Tabla \ref{KM_Oahu}.
+
+\begin{table}[H]
+\begin{tabular}{cccccc}
+\hline
+\begin{tabular}[c]{@{}c@{}}Mediciones\\ detectadas\end{tabular} & \begin{tabular}[c]{@{}c@{}}posición\\ $r$\end{tabular} & \begin{tabular}[c]{@{}c@{}}Número\\ en riesgo $b_i$,\\ $b_i = (n-r+1)$\end{tabular} & \begin{tabular}[c]{@{}c@{}}Cantidad de\\ detecciones $d_i$\\ en ese valor\end{tabular} & \begin{tabular}[c]{@{}c@{}}Incremento de\\ supervivencia\\ $p_i=1-\frac{d_i}{b_i}$\end{tabular} & $\hat{S}(t)=\prod_{i=1}^n p_i$ \\ \hline
+3.2                                                             & 1                                                      & 24                                                                                & 1                                                                                      & 23/24                                                                                             & 0.9583                         \\
+2.8                                                             & 2                                                      & 23                                                                                & 1                                                                                      & 22/23                                                                                             & 0.9167                         \\
+1.7                                                             & 11                                                     & 14                                                                                & 1                                                                                      & 13/14                                                                                             & 0.8512                         \\
+1.5                                                             & 12                                                     & 13                                                                                & 1                                                                                      & 12/13                                                                                             & 0.7857                         \\
+0.9                                                             & 17                                                     & 8                                                                                 & 1                                                                                      & 7/8                                                                                               & 0.6875                         \\
+0.7                                                             & 19                                                     & 6                                                                                 & 2                                                                                      & 4/6                                                                                               & 0.4583                         \\
+0.6                                                             & 21                                                     & 4                                                                                 & 1                                                                                      & 3/4                                                                                               & 0.3438                         \\
+0.5                                                             & 22                                                     & 3                                                                                 & 3                                                                                      & 0/3                                                                                               & 0                             
+\end{tabular}
+\end{table}
+
+\subsection*{Algunas generalizaciones del Método de Kaplan-Meier}
+
+\begin{enumerate}
+    \item Generalización de Michael-Schucany
+
+Para conjuntos de datos completos (es decir, sin datos censurados), la ecuación
+
+$$\hat{p}_i = \frac{\#{x_j\leq x_{(i)}}}{N}$$
+
+presenta el inconveniente de que asigna al valor observado más grande una probabilidad acumulada igual a 1, es decir, lo considera como el percentil 100. Esta característica puede ser adecuada cuando se sabe que la distribución subyacente es discreta, pero generalmente no resulta apropiada cuando se asume que la distribución es continua.
+
+Una expresión más utilizada para determinar las posiciones de cuantiles en conjuntos de datos completos es
+
+$$\hat{p}_i = \frac{i-a}{N-2a+1},\qquad 0\leq a\leq 1$$
+
+donde $a$ es una constante denominada constante de posición de trazado. Su valor suele seleccionarse de manera que las posiciones obtenidas sean aproximadamente insesgadas, es decir, que se aproximen al valor medio de su distribución, o bien que se aproximen a la mediana de dicha distribución. Michael y Schucany extendieron esta formulación para trabajar tanto con datos censurados por la izquierda como con datos censurados por la derecha.
+
+\begin{description}
+    \item[Datos censurados por la derecha] 
+
+Para datos censurados por la derecha, las posiciones de trazado correspondientes a las observaciones no censuradas se calculan mediante
+
+$$\hat{p}_i = 1-
+\frac{N-a+1}{N-2a+1}
+\prod_{\substack{j\in\Omega, j\leq i}}
+\frac{N-j-a+1}{N-j-a+2},
+\qquad i\in\Omega
+\qquad a= 0$$
+
+
+Además, cuando no existen observaciones censuradas, la ecuación anterior se reduce a
+
+$$\hat{p_i}=\frac{i-a}{N-2a+1}.$$
+
+A diferencia del método de Kaplan--Meier, cuando existen observaciones no censuradas empatadas, estas no reciben necesariamente la misma posición de cuantil. Esto es consistente con lo que ocurre en conjuntos de datos completos al utilizar la expresión anterior.
+
+Para una observación censurada por la derecha, su posición de cuantil se establece igual a la posición asociada con la observación no censurada más grande que sea menor o igual al nivel de censura correspondiente. Si no existe ninguna observación no censurada menor o igual a dicho nivel, se asigna una posición igual a 0.
+
+\item[Datos censurados por la izquierda]
+
+Para datos censurados por la izquierda, las posiciones se calculan mediante
+
+$$\hat{p}_i = \frac{N-a+1}{N-2a+1}
+\prod_{\substack{j\in\Omega, j\geq i}}
+\frac{j-a}{j-a+1},
+\qquad i\in\Omega$$
+
+En ausencia de observaciones censuradas, esta expresión se reduce nuevamente a
+
+$$\hat{p_i}=\frac{i-a}{N-2a+1}.$$
+
+Al igual que en el caso de datos censurados por la derecha, las observaciones no censuradas que presentan valores empatados pueden recibir posiciones diferentes.
+
+Para una observación censurada por la izquierda, su posición de cuantil se establece igual a la posición asociada con la observación no censurada más pequeña que sea mayor o igual al nivel de censura correspondiente. Si no existe ninguna observación no censurada mayor o igual a dicho nivel, se asigna una posición de trazado igual a 1.
+
+\end{description}
+
+    \item Generalización de Hirsch-Stedinger
+
+Hirsch y Stedinger propusieron un procedimiento ligeramente diferente de los métodos de Kaplan-Meier y de Michael-Schucany para obtener una estimación no paramétrica de la función de supervivencia, entendida como la probabilidad de excedencia, particularmente en el contexto de datos censurados por la izquierda.
+
+El procedimiento comienza estimando el valor de la función de supervivencia en cada uno de los niveles de censura. Posteriormente, para una observación no censurada situada entre dos niveles de censura consecutivos, se obtiene su posición de cuantil mediante una interpolación lineal. La formulación puede extenderse al caso de datos censurados por la derecha.
+
+\begin{description}
+    \item[Datos censurados por la derecha] 
+
+Para datos censurados por la derecha, sea $T_j$ el j-ésimo nivel de censura, con $(j=0,1,\ldots,K)$. La función de supervivencia puede expresarse como
+
+$$S(T_j)=P(X>T_j).$$
+
+Esta probabilidad puede descomponerse de la siguiente manera:
+
+$$S(T_j)=S(T_{j+1})+P(T_j<X\leq T_{j+1}\mid X>T_j)S(T_j).$$
+
+Se definen los extremos
+
+$$T_0=-\infty,
+\qquad
+T_{K+1}=\infty$$
+
+Para cada intervalo $(T_j,T_{j+1}]$, se define
+
+$$A_j=\#~{\text{observaciones no censuradas en }(T_j,T_{j+1}]}.$$
+
+El estimador de momentos del término condicional de la expresión anterior es
+
+$$\widehat{P}[T_j \leq X \leq T_{j+1}| X > T_j] = \frac{A_j}{A_j+B_j}.$$
+
+Por consiguiente,
+
+$$\hat{S}(T_j)=\hat{S}(T_{j+1}) + \left( \frac{A_j}{A_j+B_j}\right)\hat{S}(T_j),$$
+
+o, equivalentemente,
+
+$$\hat{S}(T_{j+1})=\hat{S}(T_j)
+\left(
+1-\frac{A_j}{A_j+B_j}
+\right).$$
+
+Esta expresión puede resolverse iterativamente para $j=1,2,\ldots,K$, utilizando las condiciones de frontera $$\hat{S}(T_0)=\hat{S}(-\infty)=S(-\infty)=1,$$ $$\hat{S}(T_{K+1})=\hat{S}(\infty)=S(\infty)=0.$$
+
+Una vez estimada la función de supervivencia en los niveles de censura, las posiciones de cuantil para las $A_j$ observaciones no censuradas pertenecientes al intervalo $(T_j,T_{j+1}]$ se calculan mediante
+
+$$\hat{p}_i=[1-\hat{S}(T_j)] + [\hat{S}(T_j)-\hat{S}(T_{j+1})] \frac{r-a}{A_j-2a+1},$$
+
+donde $a$ es la constante de posición de cuantil, $0\leq a\leq 1$, y $r$ representa el rango de la i-ésima observación dentro de las $A_j$ observaciones no censuradas del intervalo. Las observaciones empatadas reciben rangos distintos.
+
+Para las $c_j$ observaciones censuradas en el nivel $T_j$, las posiciones de trazado se calculan como
+
+$$\hat{p_i}=1-\hat{S}(T_j) \frac{r-a}{c_j-2a+1}.$$
+
+Aquí, $r$ corresponde al rango de la i-ésima observación entre las $c_j$ observaciones censuradas en el mismo nivel. Aunque las observaciones tengan el mismo nivel de censura y no sea posible distinguirlas mediante la información observada, se les asignan rangos diferentes para efectuar el cálculo.
+
+\item[Datos censurados por la izquierda]
+
+Para datos censurados por la izquierda, Hirsch y Stedinger modifican la definición de la función de supervivencia como
+
+$$S^*(t)=P(X\geq t).$$
+
+Para distribuciones continuas, $S(t)$ y $S^*(t)$ son equivalentes.
+
+Para el j-ésimo nivel de censura, se tiene
+
+$$S(T_j)=P(X\geq T_j),$$
+
+que puede expresarse como
+
+$$S(T_j)=S^*(T_{j+1})+P(T_j\leq X<T_{j+1}\mid X<T_{j+1}) [1-S^(T_j)].$$
+
+Los extremos se mantienen como
+
+$$T_0=-\infty,\qquad T_{K+1}=\infty.$$
+
+Para cada intervalo $[T_j,T_{j+1})$, se define
+
+$$A_j=\#{\text{observaciones no censuradas en }[T_j,T_{j+1})},$$
+
+El estimador de momentos del término condicional es
+
+$$P[T_j \leq X \leq T_{j+1}| X < T_{j+1}] =\frac{A_j}{A_j+B_j}.$$
+
+En consecuencia,
+
+$$\hat{S}(T_j)=\hat{S}^(T_{j+1}) + \frac{A_j}{A_j+B_j} \left[\hat{S}(T_j)\right].$$
+
+Esta expresión se resuelve iterativamente para $j=1,2,\ldots,K$, con las condiciones
+$$\widehat{S^*}(T_{k+1})=\widehat{S^*}(\infty)=0,$$
+
+$$\widehat{S^*}(T_0)=\widehat{S^*}(-\infty)=1.$$
+
+Una vez obtenidos los valores de la función de supervivencia en los niveles de censura, las posiciones de trazado para las $A_j$ observaciones no censuradas pertenecientes al intervalo $[T_j,T_{j+1})$ se calculan mediante
+
+$$\hat{p_i}=1-\widehat{S^*}(T_j)] +
+[\widehat{S^*}(T_j)-\widehat{S^*}(T_{j+1})]
+\frac{r-a}{A_j-2a+1} \qquad 0\leq a\leq0.5,$$
+
+y $r$ representa el rango de la i-ésima observación dentro de las $A_j$ observaciones no censuradas del intervalo. Las observaciones empatadas reciben rangos distintos.
+
+Finalmente, para las $c_j$ observaciones censuradas en el nivel $T_j$, las posiciones de trazado se obtienen mediante
+
+$$\hat{p_i}=1-\widehat{S^*}(T_j)]
+\frac{r-a}{c_j-2a+1}.$$
+
+Al igual que en el caso de censura por la derecha, las observaciones censuradas en un mismo nivel reciben rangos diferentes para realizar el cálculo, aunque no exista información que permita distinguirlas individualmente \cite{EnvStats_ppointsCensored}.
+\end{description}
+\end{enumerate}
