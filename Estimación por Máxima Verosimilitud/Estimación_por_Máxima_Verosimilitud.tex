@@ -1,1 +1,31 @@
+\chapter*{Estimación por Máxima Verosimilitud}
 
+El método de Estimación por Máxima Verosimilitud se utiliza para estimar parámetros de distribuciones, como la media o la desviación estándar. Es un método paramétrico, lo que significa que se debe asumir una determinada distribución al calcular los parámetros; si no se tiene una buena idea de la distribución subyacente, el modelo puede llevar a conclusiones erróneas, por lo que es recomendable elaborar Q-Q plots  para datos censurados o pruebas de bondad de ajuste para confirmar la distribución teórica.
+
+La Estimación por Máxima Verosimilitud comienza con la formulación de una expresión conocida como función de verosimilitud de los datos de la muestra. En términos generales, la verosimilitud de un conjunto de datos es la probabilidad de obtener dicho conjunto, dado el modelo de distribución de probabilidad elegido. Esta expresión contiene los parámetros desconocidos del modelo. Los valores de estos parámetros que maximizan la verosimilitud de la muestra se conocen como Estimaciones por Máxima Verosimilitud (MLE).
+
+Dado $\mathbf{X}=\mathbf{x}$, la función de verosimilitud
+es cualquier función de $\theta$ proporcional a la función
+de probabilidad conjunta (caso discreto) o a la función de
+densidad de probabilidad conjunta (caso continuo) de
+$\mathbf{X}$:
+\begin{equation}
+    L(\theta) \propto f(\mathbf{x};\theta).
+    \tag{4}
+\end{equation}
+ 
+Si $\mathbf{X}=(X_1,\ldots,X_n)$ es una muestra aleatoria
+de $f(x\mid\theta)$, la función de verosimilitud (4)
+es un producto:
+\begin{equation}
+    L(\theta) \propto \prod_{i=1}^{n} f(x_i;\theta).
+    \tag{5}
+\end{equation} \cite{Lindgren1993} 
+
+Para el caso de datos censurados, sea $f(t)$ la Función de densidad de probabilidad y $F(t)$ la función de distribución acumulada del modelo de distribución escogido. La función de verosimilitud para censura tipo I es $$L=C\left ( \prod_{i=1}^{r} f(t_i) \right )[1-F(T)]^{n-r}$$ donde $C$ denota una constante que no juega ningún papel al resolver para MLEs. Para el caso de censura tipo II, sólo cambiamos $T$ por el tiempo de censura observado $t_r$. Para Censura por intervalo tenemos la fórmula $$L=C\left ( \prod_{i=1}^{k} [F(T_i)-F(T_{i-1})]^{r_i} \right )[1-F(T)]^{n-\sum_{i=1}^{k}r_i}$$ con $F(T_0)$ definido como 0 \cite{NIST_Handbook_Chapter_MLE}. 
+
+Hacer este proceso a mano resulta largo, ya que el proceso involucra resolver derivadas parciales de $\ln L$ y resolver las ecuaciones resultantes, generalmente no lineales, por lo que es recomendable utilizar este método en software estadístico. En R, podemos hacer uso de la función $cenmle()$; sólo necesitamos introducir la muestra, indicar cuales observaciones están censuradas, como se ha venido haciendo, y especificar la distribución que queremos utilizar; por defecto, la lognormal.
+
+\begin{minted}[bgcolor=gray]{R}
+cenmle(obs, censored, dist = "lognormal")
+\end{minted}
